@@ -1,0 +1,10 @@
+{% extends "marketplace/base.html" %}
+{% block title %}My profile{% endblock %}
+{% block breadcrumb %}My profile{% endblock %}
+{% block content %}
+<section class="page-view active"><div class="simple-page-heading"><div class="section-kicker">YOUR INTRODUCTION</div><h1>My profile</h1><p>A clear, welcoming profile sets a kind tone before the first hello.</p></div>
+  <div class="panel settings-panel"><div class="profile-edit-intro"><div class="avatar avatar-large avatar-green">{{ request.user.first_name|default:request.user.username|slice:":1"|upper }}</div><div><span class="section-kicker">{{ request.user.get_role_display|upper }} PROFILE</span><h2>{{ request.user.display_name }}</h2><p>{{ request.user.email }}</p></div></div><div class="settings-divider"></div>
+    <form method="post" class="stacked-form">{% csrf_token %}{% for field in form %}{% include "marketplace/partials/form_field.html" with field=field %}{% endfor %}<div class="info-callout"><strong>Identity verification is unavailable.</strong> This does not prevent you from saving your profile. Do not add an ID number, passport number, bank details or home-access codes. “Available now” is self-reported, visible to signed-in employers, and stays on until you switch it off.</div><button class="button button-primary form-submit" type="submit">Save profile</button></form>
+  </div>
+</section>
+{% endblock %}

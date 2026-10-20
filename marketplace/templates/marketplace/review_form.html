@@ -1,0 +1,6 @@
+{% extends "marketplace/base.html" %}
+{% block title %}Write a review{% endblock %}
+{% block breadcrumb %}Write a review{% endblock %}
+{% block content %}
+<section class="page-view active"><div class="simple-page-heading"><div class="section-kicker">A FAIR, HELPFUL REVIEW</div><h1>Review {{ reviewee.display_name }}</h1><p>For the completed household job: {{ job.title }}.</p></div><div class="panel form-panel"><form method="post" class="stacked-form">{% csrf_token %}{% for field in form %}{% include "marketplace/partials/form_field.html" with field=field %}{% endfor %}<div class="info-callout">Focus on job-related experience and respectful, specific feedback. Do not include sensitive personal details. Reviews are visible to other signed-in users.</div><div class="form-actions"><a class="button button-outline" href="{% url 'reviews' %}">Cancel</a><button class="button button-primary" type="submit">Publish review</button></div></form></div></section>
+{% endblock %}

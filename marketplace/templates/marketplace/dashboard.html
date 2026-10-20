@@ -1,0 +1,45 @@
+{% extends "marketplace/base.html" %}
+{% block title %}Your workspace{% endblock %}
+{% block breadcrumb %}Overview{% endblock %}
+{% block content %}
+<section class="page-view active">
+  <div class="welcome-row">
+    <div><div class="welcome-eyebrow"><span class="welcome-sun">☀</span> A LITTLE HELP GOES A LONG WAY</div>
+      <h1>Welcome, {{ request.user.first_name|default:request.user.username }} <span>✳</span></h1>
+      <p>{% if request.user.role == "employer" %}Your home, a little more in hand. Here’s what’s happening today.{% else %}Your skills and care make a real difference. Here’s what’s happening today.{% endif %}</p>
+    </div>
+    {% if request.user.role == "employer" %}<a class="button button-primary" href="{% url 'job_create' %}"><span class="button-plus">＋</span> Post a job</a>
+    {% else %}<a class="button button-primary" href="{% url 'job_list' %}"><span class="button-plus">⌕</span> Find a job</a>{% endif %}
+  </div>
+  <div class="dashboard-grid">
+    <div class="main-column">
+      <div class="stats-grid">
+        <article class="stat-card"><div class="stat-top"><span>{% if request.user.role == "employer" %}Open jobs{% else %}Available jobs{% endif %}</span><span class="stat-icon stat-icon-sage">⌂</span></div><div class="stat-number">{{ job_count }}</div><div class="stat-note"><span class="note-pill">● Active</span><span>{% if request.user.role == "employer" %}Your household{% else %}Across your area{% endif %}</span></div></article>
+        <article class="stat-card"><div class="stat-top"><span>Applications</span><span class="stat-icon stat-icon-peach">▤</span></div><div class="stat-number">{{ application_count }}</div><div class="stat-note"><span>In your account</span></div></article>
+        <article class="stat-card"><div class="stat-top"><span>Conversations</span><span class="stat-icon stat-icon-lilac">▱</span></div><div class="stat-number">{{ recent_conversations|length }}</div><div class="stat-note"><span>About household work</span></div></article>
+      </div>
+      <section class="panel jobs-panel">
+        <div class="section-heading"><div><div class="section-kicker">{% if request.user.role == "employer" %}YOUR HOUSEHOLD{% else %}LOCAL OPPORTUNITIES{% endif %}</div><h2>{% if request.user.role == "employer" %}Your jobs{% else %}Available jobs{% endif %}</h2></div><a class="text-link" href="{% url 'job_list' %}">View all ↗</a></div>
+        {% for job in my_jobs %}
+          <article class="job-row"><span class="job-icon">{{ job.get_category_display|first }}</span><div class="job-copy"><h3><a href="{% url 'job_detail' job.pk %}">{{ job.title }}</a></h3><div class="job-meta"><span>{{ job.schedule }}</span><span>· {{ job.location }}</span></div></div><div class="job-row-side">{% if request.user.role == "employer" %}<span class="applicants"><strong>{{ job.application_count }}</strong> applicants</span>{% else %}<span class="job-state">{{ job.get_category_display }}</span>{% endif %}<a class="view-application" href="{% url 'job_detail' job.pk %}">View job</a></div></article>
+        {% empty %}<div class="empty-state">{% if request.user.role == "employer" %}No jobs posted yet. Create a clear, thoughtful job post to get started.{% else %}There are no open jobs yet. Check back soon.{% endif %}</div>{% endfor %}
+      </section>
+      <section class="panel applications-panel">
+        <div class="section-heading"><div><div class="section-kicker">{% if request.user.role == "employer" %}YOUR CANDIDATES{% else %}YOUR HOUSEHOLD WORK{% endif %}</div><h2>{% if request.user.role == "employer" %}Recent applications{% else %}Your applications{% endif %}</h2></div><a class="text-link" href="{% url 'applications' %}">View all ↗</a></div>
+        {% for application in recent_applications %}
+          <article class="applicant-row"><span class="avatar avatar-applicant">{{ application.helper.first_name|default:application.helper.username|slice:":1"|upper }}</span><div class="applicant-copy"><strong>{% if request.user.role == "employer" %}{{ application.helper.display_name }}{% else %}{{ application.job.title }}{% endif %}</strong><span>{{ application.job.title }} · {{ application.get_status_display }}</span></div><a class="view-application" href="{% url 'job_detail' application.job.pk %}">View job</a></article>
+        {% empty %}<div class="empty-state">Applications will appear here when you apply for a role or someone applies to your job.</div>{% endfor %}
+      </section>
+    </div>
+    <aside class="right-column">
+      <section class="panel profile-card"><div class="profile-card-top"><span class="section-kicker">YOUR PROFILE</span><a class="text-link" href="{% url 'profile' %}">Edit ↗</a></div><div class="profile-person"><div class="avatar avatar-large avatar-green">{{ request.user.first_name|default:request.user.username|slice:":1"|upper }}</div><div><h2>{{ request.user.display_name }}</h2><span>{{ request.user.get_role_display }}{% if profile.location %} · {{ profile.location }}{% endif %}</span></div></div><div class="verification-strip"><span class="verified-check">i</span><div><strong>Identity not verified</strong><span>This site does not check documents</span></div><a class="arrow-button" href="{% url 'safety' %}" aria-label="Read safety guidance">→</a></div><div class="profile-completion"><div class="completion-label"><span>Profile introduction</span><strong>{% if profile.about %}Added{% else %}Optional{% endif %}</strong></div><div class="progress-track"><span style="width:{% if profile.about %}100{% else %}25{% endif %}%"></span></div><p>Share experience and skills without adding sensitive identity details.</p></div></section>
+      <section class="trust-card"><div class="trust-decoration">✳</div><div class="trust-kicker">GOOD TO KNOW</div><h2>Good work<br>starts with trust.</h2><p>Learn about thoughtful hiring, fair working conditions and staying safe.</p><a href="{% url 'safety' %}">Explore our safety guide →</a><div class="trust-bottom-art" aria-hidden="true"><span>✿</span><span>⌂</span><span>✳</span></div></section>
+      <section class="panel message-preview"><div class="section-heading message-heading"><div><div class="section-kicker">YOUR INBOX</div><h2>Recent chats</h2></div><a class="text-link" href="{% url 'conversations' %}">See all ↗</a></div>
+        {% for conversation in recent_conversations %}<div class="chat-preview-row"><span class="avatar avatar-applicant">{{ conversation.helper.first_name|default:conversation.helper.username|slice:":1"|upper }}</span><div class="chat-preview-copy"><strong>{% if request.user.role == "employer" %}{{ conversation.helper.display_name }}{% else %}{{ conversation.job.employer.display_name }}{% endif %}</strong><span>{{ conversation.job.title }}</span></div><a class="chat-time" href="{% url 'conversation_detail' conversation.pk %}">Open</a></div>
+        {% empty %}<div class="empty-state">Conversations about your household jobs will appear here.</div>{% endfor %}
+      </section>
+      <div class="local-note"><span>♧</span> Identity checks are not available on this site.</div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

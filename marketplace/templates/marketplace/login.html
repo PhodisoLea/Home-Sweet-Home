@@ -1,0 +1,24 @@
+{% extends "marketplace/base.html" %}
+{% block title %}Log in{% endblock %}
+{% block breadcrumb %}Log in{% endblock %}
+{% block content %}
+<section class="page-view active auth-page">
+  <div class="auth-card panel">
+    <div class="section-kicker">WELCOME BACK</div>
+    <h1>Log in to Home Help</h1>
+    <p>Choose your account type and log in with your username and password.</p>
+    {% if form.errors %}<div class="form-error login-error">Please check your account type and sign-in details.</div>{% endif %}
+    <form method="post" class="stacked-form">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      {% if form.non_field_errors %}<div class="form-error login-error">{{ form.non_field_errors }}</div>{% endif %}
+      <fieldset class="role-fieldset"><legend>{{ form.role.label }} *</legend>{{ form.role }}{% for error in form.role.errors %}<span class="form-error">{{ error }}</span>{% endfor %}</fieldset>
+      {% include "marketplace/partials/form_field.html" with field=form.username %}
+      {% include "marketplace/partials/form_field.html" with field=form.password %}
+      <div class="login-forgot"><a href="{% url 'password_reset' %}">Forgot password?</a></div>
+      <button class="button button-primary form-submit" type="submit">Log in</button>
+    </form>
+    <p class="auth-footer">New to Home Help? <a href="{% url 'signup' %}">Create an account</a></p>
+  </div>
+</section>
+{% endblock %}

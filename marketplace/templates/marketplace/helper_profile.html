@@ -1,0 +1,18 @@
+{% extends "marketplace/base.html" %}
+{% block title %}{{ helper.display_name }} · Helper profile{% endblock %}
+{% block breadcrumb %}Available helper{% endblock %}
+{% block content %}
+<section class="page-view active">
+  <div class="simple-page-heading"><div class="section-kicker">HELPER PROFILE · SELF-REPORTED</div><h1>{{ helper.display_name }}</h1><p>This helper has marked themselves available now. Availability and profile details are not independently verified.</p></div>
+  <article class="panel available-helper-profile">
+    <div class="application-person"><span class="avatar avatar-large avatar-green">{{ helper.first_name|default:helper.username|slice:":1"|upper }}</span><div class="application-person-copy"><strong>{{ helper.display_name }}</strong><span>{{ helper.profile.location|default:"Location not added" }}</span></div><span class="available-badge">Available now · self-reported</span></div>
+    {% if helper.helper_rating %}<p>★ {{ helper.helper_rating|floatformat:1 }} · {{ helper.helper_review_count }} review{{ helper.helper_review_count|pluralize }}</p>{% else %}<p>No employer reviews yet.</p>{% endif %}
+    <div class="settings-divider"></div>
+    <div class="helper-profile-section"><span class="section-kicker">ABOUT</span><p>{{ helper.profile.about|default:"No introduction added yet."|linebreaksbr }}</p></div>
+    <div class="helper-profile-section"><span class="section-kicker">HOUSEHOLD-WORK EXPERIENCE</span><p>{{ helper.profile.experience|default:"No experience details added yet."|linebreaksbr }}</p></div>
+    <div class="helper-profile-section"><span class="section-kicker">SKILLS</span><p>{{ helper.profile.skills|default:"No skills added yet." }}</p></div>
+    <div class="info-callout">This is information shared by the helper and is not identity-verified. To discuss a role, post the job and invite interested helpers to apply; messaging is available through a job conversation.</div>
+    <div class="form-actions"><a class="button button-outline" href="{% url 'applications' %}">Back to applications</a><a class="button button-primary" href="{% url 'job_create' %}">Post a job</a></div>
+  </article>
+</section>
+{% endblock %}

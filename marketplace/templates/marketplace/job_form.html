@@ -1,0 +1,9 @@
+{% extends "marketplace/base.html" %}
+{% block title %}Post a household job{% endblock %}
+{% block breadcrumb %}Post a job{% endblock %}
+{% block content %}
+<section class="page-view active">
+  <div class="simple-page-heading"><div class="section-kicker">THE RIGHT DETAILS MAKE A DIFFERENCE</div><h1>Post a household job</h1><p>Share clear duties, working hours and pay so helpers can make an informed choice.</p></div>
+  <div class="panel form-panel"><form method="post" class="stacked-form">{% csrf_token %}{% for field in form %}{% include "marketplace/partials/form_field.html" with field=field %}{% endfor %}<div class="info-callout">Ask only job-related questions. Do not ask for identity or passport numbers in a job post. Agree duties, hours, and fair pay before work starts.</div><div class="form-actions"><a class="button button-outline" href="{% url 'job_list' %}">Cancel</a><button class="button button-primary" type="submit">Publish job</button></div></form></div>
+</section>
+{% endblock %}
